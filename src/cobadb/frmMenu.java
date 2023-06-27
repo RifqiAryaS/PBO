@@ -10,12 +10,35 @@ package cobadb;
  */
 public class frmMenu extends javax.swing.JFrame {
 
+    private String role;
     /**
      * Creates new form frmMenu
      */
     public frmMenu() {
         initComponents();
     }
+    
+    public frmMenu(String role) {
+    initComponents();
+    this.role = role;
+    setAccessBasedOnRole();
+}
+    
+    private void setAccessBasedOnRole() {
+    if (role.equals("admin")) {
+        // Tampilkan semua menu
+        mnMaster.setEnabled(true);
+        mnTransaksi.setEnabled(true);
+        mnLaporan.setEnabled(true);
+        mnUtility.setEnabled(true);
+    } else if (role.equals("user")) {
+        // Hanya tampilkan menu transaksi
+        mnMaster.setEnabled(false);
+        mnTransaksi.setEnabled(true);
+        mnLaporan.setEnabled(false);
+        mnUtility.setEnabled(false);
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,7 +50,7 @@ public class frmMenu extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuBar1 = new javax.swing.JMenuBar();
-        mnData = new javax.swing.JMenu();
+        mnMaster = new javax.swing.JMenu();
         mnBarang = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -38,7 +61,7 @@ public class frmMenu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        mnData.setText("Data Master");
+        mnMaster.setText("Data Master");
 
         mnBarang.setText("Data Barang");
         mnBarang.addActionListener(new java.awt.event.ActionListener() {
@@ -46,16 +69,16 @@ public class frmMenu extends javax.swing.JFrame {
                 mnBarangActionPerformed(evt);
             }
         });
-        mnData.add(mnBarang);
+        mnMaster.add(mnBarang);
 
         jMenuItem2.setText("Data Konsumen");
-        mnData.add(jMenuItem2);
-        mnData.add(jSeparator1);
+        mnMaster.add(jMenuItem2);
+        mnMaster.add(jSeparator1);
 
         jMenuItem3.setText("Keluar");
-        mnData.add(jMenuItem3);
+        mnMaster.add(jMenuItem3);
 
-        jMenuBar1.add(mnData);
+        jMenuBar1.add(mnMaster);
 
         mnTransaksi.setText("Transaksi");
         jMenuBar1.add(mnTransaksi);
@@ -127,8 +150,8 @@ public class frmMenu extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem mnBarang;
-    private javax.swing.JMenu mnData;
     private javax.swing.JMenu mnLaporan;
+    private javax.swing.JMenu mnMaster;
     private javax.swing.JMenu mnTransaksi;
     private javax.swing.JMenu mnUtility;
     // End of variables declaration//GEN-END:variables
