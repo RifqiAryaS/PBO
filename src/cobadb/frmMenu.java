@@ -4,12 +4,16 @@
  */
 package cobadb;
 
+import java.sql.Connection;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.view.*;
 /**
  *
  * @author overm
  */
 public class frmMenu extends javax.swing.JFrame {
 
+    Connection Con;
     private String role;
     /**
      * Creates new form frmMenu
@@ -56,7 +60,9 @@ public class frmMenu extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
         mnTransaksi = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         mnLaporan = new javax.swing.JMenu();
+        mnLapBarang = new javax.swing.JMenuItem();
         mnUtility = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -81,9 +87,27 @@ public class frmMenu extends javax.swing.JFrame {
         jMenuBar1.add(mnMaster);
 
         mnTransaksi.setText("Transaksi");
+
+        jMenuItem1.setText("Transaksi");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        mnTransaksi.add(jMenuItem1);
+
         jMenuBar1.add(mnTransaksi);
 
         mnLaporan.setText("Laporan");
+
+        mnLapBarang.setText("Data Barang");
+        mnLapBarang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnLapBarangActionPerformed(evt);
+            }
+        });
+        mnLaporan.add(mnLapBarang);
+
         jMenuBar1.add(mnLaporan);
 
         mnUtility.setText("Utility");
@@ -108,6 +132,27 @@ public class frmMenu extends javax.swing.JFrame {
     private void mnBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnBarangActionPerformed
         new frmBarang().setVisible(true);
     }//GEN-LAST:event_mnBarangActionPerformed
+
+    private void mnLapBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnLapBarangActionPerformed
+        try{
+//            Class.forName("com.mysql.jdbc.Driver");
+//            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/penjualan","root","");
+            KoneksiMysql kon = new KoneksiMysql("localhost","root","","pbo");
+            Con = kon.getConnection();String reportPath = "Cherry_Landscape.jrxml";
+            JasperReport jr = JasperCompileManager.compileReport(reportPath);
+            JasperPrint jp = JasperFillManager.fillReport(jr,null, Con);
+            JasperViewer.viewReport(jp);
+            Con.close();
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_mnLapBarangActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new frmTransaksi().setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -146,10 +191,12 @@ public class frmMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem mnBarang;
+    private javax.swing.JMenuItem mnLapBarang;
     private javax.swing.JMenu mnLaporan;
     private javax.swing.JMenu mnMaster;
     private javax.swing.JMenu mnTransaksi;
