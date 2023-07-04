@@ -22,12 +22,13 @@ public class frmTransaksi extends javax.swing.JFrame {
     ResultSet RsKons;
     Statement stm;
     double total=0;
+    double pajak=0;
     String tanggal;
     Boolean edit=false;
     DefaultTableModel tableModel = new DefaultTableModel(
 	new Object [][] {},
 	new String [] {
-	"Kd Barang", "Nama Barang","Harga Barang","Jumlah","Total"
+	"Kd Barang", "Nama Barang","Harga Barang","Jumlah","Total","Pajak"
 	});
     
     //Var Pencarian Kode Barang
@@ -59,14 +60,17 @@ public class frmTransaksi extends javax.swing.JFrame {
     //method hitung penjualan
 private void hitung_jual()
 {
-    double xtot,xhrg;
+    double xtot,xhrg,xpjk;
     int xjml;
 
     xhrg=Double.parseDouble(txtHarga.getText());
     xjml=Integer.parseInt(txtJml.getText());
-    xtot=xhrg*xjml;
+    xtot=(xhrg*xjml)*90/100;
     String xtotal=Double.toString(xtot);
+    xpjk=((xhrg*xjml)*10/100);
+    String xpajak=Double.toString(xpjk);
     txtTot.setText(xtotal);
+    txtPajak.setText(xpajak);
     total=total+xtot;
     txtTotal.setText(Double.toString(total));
 }
@@ -186,6 +190,7 @@ private void aktif(boolean x)
     
     txtJml.setEnabled(x);
     txtTot.setEnabled(x);
+    txtPajak.setEditable(false);
     txtTot.setEditable(false);
     
     txtTotal.setEnabled(x);
@@ -252,7 +257,8 @@ private void simpan_ditabel()
         double hrg=Double.parseDouble(txtHarga.getText());
         int jml=Integer.parseInt(txtJml.getText());
         double tot=Double.parseDouble(txtTot.getText());
-        tableModel.addRow(new Object[]{tKode,tNama,hrg,jml,tot});
+        double pjk=Double.parseDouble(txtPajak.getText());
+        tableModel.addRow(new Object[]{tKode,tNama,hrg,jml,tot,pjk});
         inisialisasi_tabel();
     }
     catch(Exception e)
@@ -275,7 +281,8 @@ private void simpan_transaksi()
             String xkd=(String)tblJual.getValueAt(i,0);
             double xhrg=(Double)tblJual.getValueAt(i,2);
             int xjml=(Integer)tblJual.getValueAt(i,3);
-            String zsql="insert into djual values('"+xnojual+"','"+xkd+"',"+xhrg+","+xjml+")";
+            double xpjk=(Double)tblJual.getValueAt(i, 5);
+            String zsql="insert into djual values('"+xnojual+"','"+xkd+"',"+xhrg+","+xjml+","+xpjk+")";
             stm.executeUpdate(zsql);
         }
         
@@ -422,6 +429,7 @@ private void kosong_table(){
         txtKembali = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         text = new javax.swing.JTextArea();
+        txtPajak = new javax.swing.JTextField();
 
         jButton4.setText("Batal");
 
@@ -465,16 +473,22 @@ private void kosong_table(){
 
         tblJual.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Kd Barang", "Nama Barang", "Harga Barang", "Jumlah", "Total"
+                "Kd Barang", "Nama Barang", "Harga Barang", "Jumlah", "Total", "Pajak"
             }
         ));
         jScrollPane1.setViewportView(tblJual);
+
+        txtTot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTotActionPerformed(evt);
+            }
+        });
 
         cmdHapusItem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cmdHapusItem.setText("Hapus Item");
@@ -579,6 +593,12 @@ private void kosong_table(){
         text.setRows(5);
         jScrollPane2.setViewportView(text);
 
+        txtPajak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPajakActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -632,7 +652,9 @@ private void kosong_table(){
                         .addGap(18, 18, 18)
                         .addComponent(txtJml, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtTot, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPajak)
+                            .addComponent(txtTot, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))))
                 .addGap(19, 19, 19))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -673,7 +695,8 @@ private void kosong_table(){
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdHapusItem)
                     .addComponent(btnPilih)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPajak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
@@ -786,7 +809,7 @@ private void kosong_table(){
         format_tanggal();
       String ctk="Nota Penjualan\nNo:"+txtNoJual.getText()+"\nTanggal : "+tanggal;
       ctk=ctk+"\n"+"--------------------------------------------------------------------------------------------------------------------------------";
-      ctk=ctk+"\n"+"Kode\tNama Barang\t\tHarga\tJml\tTotal";
+      ctk=ctk+"\n"+"Kode\tNama Barang\t\tHarga\tJml\tTotal\tPajak";
       ctk=ctk+"\n"+"--------------------------------------------------------------------------------------------------------------------------------";
 
       for(int i=0;i<tblJual.getRowCount();i++)
@@ -796,7 +819,8 @@ private void kosong_table(){
           double xhrg=(Double)tblJual.getValueAt(i,2);
           int xjml=(Integer)tblJual.getValueAt(i,3);
           double xtot=(Double)tblJual.getValueAt(i,4);
-          ctk=ctk+"\n"+xkd+"\t"+xnama+"\t\t"+xhrg+"\t"+xjml+"\t"+xtot;
+          double xpjk=(Double)tblJual.getValueAt(i, 5);
+          ctk=ctk+"\n"+xkd+"\t"+xnama+"\t"+xhrg+"\t"+xjml+"\t"+xtot+"\t"+xpjk;
       }
 
       ctk=ctk+"\n"+"--------------------------------------------------------------------------------------------------------------------------------";
@@ -826,6 +850,14 @@ private void kosong_table(){
         hitung_jual();
         simpan_ditabel();
     }//GEN-LAST:event_txtJmlActionPerformed
+
+    private void txtPajakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPajakActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPajakActionPerformed
+
+    private void txtTotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTotActionPerformed
 
     /**
      * @param args the command line arguments
@@ -899,6 +931,7 @@ private void kosong_table(){
     private javax.swing.JTextField txtKembali;
     private javax.swing.JTextField txtNm_Brg;
     private javax.swing.JTextField txtNoJual;
+    private javax.swing.JTextField txtPajak;
     private javax.swing.JSpinner txtTgl;
     private javax.swing.JTextField txtTot;
     private javax.swing.JTextField txtTotal;
